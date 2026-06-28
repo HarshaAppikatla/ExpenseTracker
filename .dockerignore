@@ -1,0 +1,32 @@
+# Ignore build artifacts
+**/target/
+**/build/
+**/dist/
+**/node_modules/
+**/.vite/
+
+# Ignore IDE settings and local configurations
+**/.idea/
+**/.vscode/
+**/*.iml
+**/*.suo
+**/*.ntvs*
+**/*.njsproj
+**/*.sln
+**/*.swp
+
+# Ignore logs
+**/logs/
+**/*.log
+
+# Ignore OS-specific files
+**/.DS_Store
+**/Thumbs.db
+
+# Ignore Git files
+**/.git/
+**/.github/
+**/.gitignore
+
+# Ignore env files
+**/.env*.local
