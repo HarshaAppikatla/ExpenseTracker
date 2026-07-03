@@ -8,6 +8,7 @@ public enum ActivityType {
     GROUP_DELETED,
     MEMBER_JOINED,
     MEMBER_LEFT,
+    MEMBER_REMOVED,
     ROLE_CHANGED,
     OWNER_TRANSFERRED
 }
