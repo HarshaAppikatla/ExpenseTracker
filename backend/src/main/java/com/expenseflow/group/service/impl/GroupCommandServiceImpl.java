@@ -9,11 +9,11 @@ import com.expenseflow.group.entity.*;
 import com.expenseflow.group.event.*;
 import com.expenseflow.group.exception.GroupNotFoundException;
 import com.expenseflow.group.exception.PermissionDeniedException;
-import com.expenseflow.group.exception.RoomCodeCollisionException;
 import com.expenseflow.group.mapper.GroupMapper;
 import com.expenseflow.group.repository.GroupActivityRepository;
 import com.expenseflow.group.repository.GroupMemberRepository;
 import com.expenseflow.group.repository.GroupRepository;
+import com.expenseflow.group.service.GroupAccessService;
 import com.expenseflow.group.service.GroupCommandService;
 import com.expenseflow.group.validation.GroupValidator;
 import com.expenseflow.group.validation.PermissionValidator;
@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
@@ -40,16 +39,14 @@ public class GroupCommandServiceImpl implements GroupCommandService {
     private final PermissionValidator permissionValidator;
     private final GroupMapper groupMapper;
     private final ApplicationEventPublisher eventPublisher;
-
-    private static final String ROOM_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    private static final SecureRandom RANDOM = new SecureRandom();
+    private final GroupAccessService groupAccessService;
 
     @Override
     public GroupDto createGroup(CreateGroupRequest request, String currentUserId) {
         UserEntity owner = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new SecurityHardeningException("User not found.", "USR_001"));
 
-        GroupCode groupCode = generateUniqueGroupCode();
+        GroupCode groupCode = groupAccessService.generateGroupCode();
 
         GroupEntity group = GroupEntity.builder()
                 .id(UUID.randomUUID().toString())
@@ -207,24 +204,6 @@ public class GroupCommandServiceImpl implements GroupCommandService {
     private GroupMemberEntity fetchActiveMember(String groupId, String userId) {
         return groupMemberRepository.findByGroupIdAndUserIdAndStatusAndIsDeletedFalse(groupId, userId, GroupMemberStatus.ACTIVE)
                 .orElseThrow(() -> new PermissionDeniedException("User is not an active member of this group"));
-    }
-
-    private GroupCode generateUniqueGroupCode() {
-        for (int i = 0; i < 5; i++) {
-            GroupCode code = new GroupCode(generatePlaceholderCode());
-            if (!groupRepository.existsByGroupCodeAndIsDeletedFalse(code)) {
-                return code;
-            }
-        }
-        throw new RoomCodeCollisionException("Failed to generate a unique room code after 5 attempts");
-    }
-
-    private String generatePlaceholderCode() {
-        StringBuilder codeBuilder = new StringBuilder(8);
-        for (int i = 0; i < 8; i++) {
-            codeBuilder.append(ROOM_CODE_ALPHABET.charAt(RANDOM.nextInt(ROOM_CODE_ALPHABET.length())));
-        }
-        return codeBuilder.toString();
     }
 
     private Map<String, Object> createActivityMetadata(UserEntity user) {

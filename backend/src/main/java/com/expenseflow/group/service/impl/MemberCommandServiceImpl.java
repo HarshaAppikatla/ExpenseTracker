@@ -12,11 +12,11 @@ import com.expenseflow.group.mapper.GroupMapper;
 import com.expenseflow.group.repository.GroupActivityRepository;
 import com.expenseflow.group.repository.GroupMemberRepository;
 import com.expenseflow.group.repository.GroupRepository;
+import com.expenseflow.group.service.GroupAccessService;
 import com.expenseflow.group.service.MemberCommandService;
 import com.expenseflow.group.validation.GroupValidator;
 import com.expenseflow.group.validation.OwnershipValidator;
 import com.expenseflow.group.validation.PermissionValidator;
-import com.expenseflow.group.validation.RoomCodeValidator;
 import com.expenseflow.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -39,20 +39,16 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final GroupValidator groupValidator;
     private final PermissionValidator permissionValidator;
     private final OwnershipValidator ownershipValidator;
-    private final RoomCodeValidator roomCodeValidator;
     private final GroupMapper groupMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final GroupAccessService groupAccessService;
 
     @Override
     public GroupDto joinGroup(JoinGroupRequest request, String currentUserId) {
         UserEntity user = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new SecurityHardeningException("User not found.", "USR_001"));
 
-        GroupCode groupCode = new GroupCode(request.roomCode());
-        GroupEntity group = groupRepository.findByGroupCodeAndIsDeletedFalse(groupCode)
-                .orElseThrow(() -> new InvalidRoomCodeException("Invalid room code"));
-
-        roomCodeValidator.validateRoomCodeActive(group);
+        GroupEntity group = groupAccessService.validateAndResolveCode(request.roomCode());
 
         Optional<GroupMemberEntity> existingMemberOpt = groupMemberRepository
                 .findByGroupIdAndUserIdAndIsDeletedFalse(group.getId(), currentUserId);
