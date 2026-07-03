@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class PermissionValidator {
 
     public void validateRoleRequired(GroupRole currentRole, GroupRole requiredMinimumRole) {
-        if (currentRole == null || currentRole.ordinal() > requiredMinimumRole.ordinal()) {
+        if (currentRole == null || !currentRole.hasPermissionOf(requiredMinimumRole)) {
             throw new PermissionDeniedException("Permission denied: required role is " + requiredMinimumRole);
         }
     }

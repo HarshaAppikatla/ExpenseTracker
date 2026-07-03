@@ -58,6 +58,10 @@ public class GlobalExceptionHandler {
             status = HttpStatus.NOT_FOUND;
         } else if (ex instanceof com.expenseflow.group.exception.PermissionDeniedException) {
             status = HttpStatus.FORBIDDEN;
+        } else if (ex instanceof com.expenseflow.group.exception.DuplicateMemberException ||
+                   ex instanceof com.expenseflow.group.exception.OwnerCannotLeaveException ||
+                   ex instanceof com.expenseflow.group.exception.GroupArchivedException) {
+            status = HttpStatus.CONFLICT;
         }
         return ResponseEntity
                 .status(status)
