@@ -38,6 +38,40 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
+    @ExceptionHandler(SecurityHardeningException.class)
+    public ResponseEntity<ApiResponse<Object>> handleSecurityHardeningException(SecurityHardeningException ex) {
+        log.warn("Security hardening exception triggered [{}]: {}", ex.getCode(), ex.getMessage());
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if ("AUTH_006".equals(ex.getCode())) {
+            status = HttpStatus.TOO_MANY_REQUESTS;
+        }
+        return ResponseEntity
+                .status(status)
+                .body(ApiResponse.error(ex.getMessage(), ex.getCode(), ex.getData()));
+    }
+
+    @ExceptionHandler(com.expenseflow.group.exception.GroupException.class)
+    public ResponseEntity<ApiResponse<Void>> handleGroupException(com.expenseflow.group.exception.GroupException ex) {
+        log.warn("Group domain exception triggered [{}]: {}", ex.getCode(), ex.getMessage());
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if (ex instanceof com.expenseflow.group.exception.GroupNotFoundException) {
+            status = HttpStatus.NOT_FOUND;
+        } else if (ex instanceof com.expenseflow.group.exception.PermissionDeniedException) {
+            status = HttpStatus.FORBIDDEN;
+        }
+        return ResponseEntity
+                .status(status)
+                .body(ApiResponse.error(ex.getMessage(), ex.getCode()));
+    }
+
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
+        log.warn("Resource not found: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("Resource not found"));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
         log.error("An unexpected error occurred: ", ex);
