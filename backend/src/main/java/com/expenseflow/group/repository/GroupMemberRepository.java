@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface GroupMemberRepository extends JpaRepository<GroupMemberEntity, String> {
@@ -16,6 +17,8 @@ public interface GroupMemberRepository extends JpaRepository<GroupMemberEntity, 
     Optional<GroupMemberEntity> findByGroupIdAndUserIdAndIsDeletedFalse(String groupId, String userId);
 
     Optional<GroupMemberEntity> findByGroupIdAndUserIdAndStatusAndIsDeletedFalse(String groupId, String userId, GroupMemberStatus status);
+
+    List<GroupMemberEntity> findByUserIdAndGroupIdInAndStatusAndIsDeletedFalse(String userId, java.util.List<String> groupIds, GroupMemberStatus status);
 
     boolean existsByGroupIdAndUserIdAndStatusAndIsDeletedFalse(String groupId, String userId, GroupMemberStatus status);
 
