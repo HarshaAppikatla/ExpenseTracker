@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -45,7 +47,12 @@ public class IpRateLimitingFilter implements Filter {
         String endpointType = getEndpointType(path, method);
         if (endpointType != null) {
             String ip = getClientIp(httpRequest);
-            String cacheKey = ip + ":" + endpointType;
+            String clientKey = ip;
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.getPrincipal() instanceof UserPrincipal principal) {
+                clientKey = principal.getId();
+            }
+            String cacheKey = clientKey + ":" + ip + ":" + endpointType;
 
             Bucket bucket = ipBuckets.computeIfAbsent(cacheKey, k -> createNewBucket(endpointType));
 
