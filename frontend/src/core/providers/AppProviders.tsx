@@ -7,6 +7,8 @@ import { queryClient } from '../api/queryClient';
 import { createAppTheme } from '../../theme';
 import { STORAGE_KEYS } from '../constants';
 
+import { AuthProvider } from '../contexts/AuthContext';
+
 interface ThemeContextType {
   mode: 'light' | 'dark';
   toggleTheme: () => void;
@@ -57,7 +59,9 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
       <ThemeContext.Provider value={{ mode, toggleTheme }}>
         <MuiThemeProvider theme={theme}>
           <CssBaseline />
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
           <Toaster
             position="top-right"
             toastOptions={{

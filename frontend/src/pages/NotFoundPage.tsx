@@ -11,8 +11,8 @@ export const NotFoundPage: React.FC = () => {
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-900/10 rounded-full blur-[100px]"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-900/10 rounded-full blur-[100px]"></div>
 
-      <div className="p-16 bg-blue-950/40 border border-blue-800/60 rounded-full text-primary animate-bounce">
-        <Compass className="w-12 h-12" />
+      <div className="p-16 bg-blue-950 border border-blue-800 text-blue-400 rounded-full animate-bounce">
+        <Compass className="w-48 h-48" />
       </div>
 
       <div className="space-y-8">
@@ -27,7 +27,7 @@ export const NotFoundPage: React.FC = () => {
 
       <div className="flex gap-16 mt-16">
         <Button variant="outlined" onClick={() => navigate(-1)} className="border-slate-700 text-slate-300 hover:bg-slate-900">
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-16 h-16" />
           <span>Go Back</span>
         </Button>
         <Button variant="filled" onClick={() => navigate('/')}>
