@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { groupCommands } from '../api/groupCommands';
+import { groupCommands } from '../api';
 import { groupKeys } from './groupKeys';
 import toast from 'react-hot-toast';
 

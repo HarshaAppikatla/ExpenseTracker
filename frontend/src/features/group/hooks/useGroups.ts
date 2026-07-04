@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { groupQueries } from '../api/groupQueries';
+import { groupQueries } from '../api';
 import { groupKeys } from './groupKeys';
 
 export const useMyGroups = (search?: string, page = 0, size = 10) => {
