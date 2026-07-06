@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Settings, Shield, Sliders } from 'lucide-react';
+import { Settings, Sliders } from 'lucide-react';
 
 export const SettingsLayout: React.FC = () => {
   const tabs = [

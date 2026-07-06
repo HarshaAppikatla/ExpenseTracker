@@ -8,9 +8,11 @@ import com.expenseflow.group.service.MemberCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("groupFacade")
+@Primary
 @RequiredArgsConstructor
 public class GroupFacadeImpl implements GroupFacade {
 

@@ -18,6 +18,8 @@ import { RoomCodeCard } from '../features/group/components/RoomCodeCard';
 import { GroupSettingsCard } from '../features/group/components/GroupSettingsCard';
 import { GroupDashboardSkeleton } from '../features/group/components/GroupSkeletons';
 import { TransferOwnershipDialog } from '../features/group/components/TransferOwnershipDialog';
+import { TripList } from '../features/trips/components/TripList';
+import { ExpenseList } from '../features/expense/components/ExpenseList';
 
 export const GroupDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +28,7 @@ export const GroupDetailPage: React.FC = () => {
   const currentUserId = user?.id;
 
   const [transferTargetId, setTransferTargetId] = React.useState<string | null>(null);
+  const [activeTab, setActiveTab] = React.useState<'members' | 'activity' | 'trips' | 'expenses'>('members');
 
   // Queries
   const { data, isLoading, isError, error } = useGroupDashboard(id || '', !!id);
@@ -54,7 +57,7 @@ export const GroupDetailPage: React.FC = () => {
           <p className="font-semibold mb-2">Failed to load group details</p>
           <p className="text-xs mb-4">{error?.message || 'Access denied or group not found.'}</p>
           <button
-            onClick={() => navigate('/dashboard/groups')}
+            onClick={() => navigate('/groups')}
             className="px-4 py-1.5 bg-slate-900 text-white rounded-lg text-sm font-semibold transition-colors"
           >
             Back to Groups
@@ -114,7 +117,7 @@ export const GroupDetailPage: React.FC = () => {
     ) {
       deleteMutation.mutate(id || '', {
         onSuccess: () => {
-          navigate('/dashboard/groups');
+          navigate('/groups');
         },
       });
     }
@@ -124,7 +127,7 @@ export const GroupDetailPage: React.FC = () => {
     if (window.confirm('Are you sure you want to leave this group?')) {
       leaveMutation.mutate(undefined, {
         onSuccess: () => {
-          navigate('/dashboard/groups');
+          navigate('/groups');
         },
       });
     }
@@ -135,28 +138,82 @@ export const GroupDetailPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 py-6">
       {/* Header breadcrumb */}
-      <GroupHeader group={group} onBackClick={() => navigate('/dashboard/groups')} />
+      <GroupHeader group={group} onBackClick={() => navigate('/groups')} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Side: Members list and activity ledger */}
+        {/* Left Side: Members, Activity, and Trips tab workspace */}
         <div className="lg:col-span-2 space-y-6">
-          <MemberList
-            members={members}
-            currentUserId={currentUserId}
-            currentUserRole={currentUserRole}
-            isGroupArchived={isArchived}
-            onKick={handleKick}
-            onRoleChange={handleRoleChange}
-            onTransferOwnership={handleTransferClick}
-          />
-
-          {/* Timeline Feed Container */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">
-              Group Activity Timeline
-            </h3>
-            <ActivityTimeline activities={recentActivities} />
+          <div className="border-b border-slate-200 dark:border-slate-800/80 flex gap-6">
+            <button
+              onClick={() => setActiveTab('members')}
+              className={`pb-3 text-sm font-bold border-b-2 transition-all ${
+                activeTab === 'members'
+                  ? 'border-slate-900 dark:border-white text-slate-900 dark:text-white'
+                  : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-350'
+              }`}
+            >
+              Members ({members.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('activity')}
+              className={`pb-3 text-sm font-bold border-b-2 transition-all ${
+                activeTab === 'activity'
+                  ? 'border-slate-900 dark:border-white text-slate-900 dark:text-white'
+                  : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-350'
+              }`}
+            >
+              Activity Timeline
+            </button>
+            <button
+              onClick={() => setActiveTab('trips')}
+              className={`pb-3 text-sm font-bold border-b-2 transition-all ${
+                activeTab === 'trips'
+                  ? 'border-slate-900 dark:border-white text-slate-900 dark:text-white'
+                  : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-350'
+              }`}
+            >
+              Trips
+            </button>
+            <button
+              onClick={() => setActiveTab('expenses')}
+              className={`pb-3 text-sm font-bold border-b-2 transition-all ${
+                activeTab === 'expenses'
+                  ? 'border-slate-900 dark:border-white text-slate-900 dark:text-white'
+                  : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-350'
+              }`}
+            >
+              Expenses
+            </button>
           </div>
+
+          {activeTab === 'members' && (
+            <MemberList
+              members={members}
+              currentUserId={currentUserId}
+              currentUserRole={currentUserRole}
+              isGroupArchived={isArchived}
+              onKick={handleKick}
+              onRoleChange={handleRoleChange}
+              onTransferOwnership={handleTransferClick}
+            />
+          )}
+
+          {activeTab === 'activity' && (
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">
+                Group Activity Timeline
+              </h3>
+              <ActivityTimeline activities={recentActivities} />
+            </div>
+          )}
+
+          {activeTab === 'trips' && (
+            <TripList groupId={group.id} />
+          )}
+
+          {activeTab === 'expenses' && (
+            <ExpenseList groupId={group.id} members={members} />
+          )}
         </div>
 
         {/* Right Side: Invite Details & Tools */}

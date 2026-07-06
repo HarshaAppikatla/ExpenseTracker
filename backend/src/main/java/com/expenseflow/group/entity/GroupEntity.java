@@ -7,7 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.Filter;
 
 @Entity
-@Table(name = "groups")
+@Table(name = "`groups`")
 @Getter
 @Setter
 @Builder

@@ -55,7 +55,7 @@ export const GroupsPage: React.FC = () => {
   };
 
   const handleCardClick = (id: string) => {
-    navigate(`/dashboard/groups/${id}`);
+    navigate(`/groups/${id}`);
   };
 
   return (

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useIncomeList, useCreateIncome, useDeleteIncome, useUpdateIncome } from '@/features/income/hooks/useIncome';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Calendar, DollarSign, X, Edit2, Copy, Search, HelpCircle, TrendingUp, TrendingDown, Wallet, ListFilter } from 'lucide-react';
+import { Plus, Trash2, Calendar, DollarSign, X, Edit2, Copy, Search, HelpCircle, TrendingUp, Wallet, ListFilter } from 'lucide-react';
 import { useProfile } from '@/features/profile/hooks/useProfile';
 import { Income } from '@/features/income/services/incomeService';
 import { useDashboardSummary } from '@/features/dashboard/hooks/useDashboard';
@@ -699,7 +699,7 @@ export const IncomePage: React.FC = () => {
             </div>
 
             {/* Pagination & Filter Summary Footer */}
-            {incomeData.totalPages > 1 && (
+            {incomeData && incomeData.totalPages > 1 && (
               <div className="flex flex-col sm:flex-row justify-between items-center mt-5 pt-3.5 border-t border-slate-150 dark:border-slate-800 gap-3">
                 <div className="flex flex-wrap items-center gap-3.5 text-[10px] font-bold text-slate-550 dark:text-slate-355">
                   <span>

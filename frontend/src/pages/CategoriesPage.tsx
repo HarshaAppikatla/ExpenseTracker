@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCategories, useCreateCategory, useDeleteCategory } from '@/features/category/hooks/useCategories';
 import toast from 'react-hot-toast';
-import { FolderPlus, Trash2, HelpCircle } from 'lucide-react';
+import { FolderPlus, Trash2 } from 'lucide-react';
 
 const PRESET_ICONS = [
   { name: 'restaurant', label: 'Food & Dining' },

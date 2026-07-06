@@ -68,6 +68,40 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage(), ex.getCode()));
     }
 
+    @ExceptionHandler(com.expenseflow.trip.exception.TripException.class)
+    public ResponseEntity<ApiResponse<Void>> handleTripException(com.expenseflow.trip.exception.TripException ex) {
+        log.warn("Trip domain exception triggered [{}]: {}", ex.getCode(), ex.getMessage());
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if (ex instanceof com.expenseflow.trip.exception.TripNotFoundException) {
+            status = HttpStatus.NOT_FOUND;
+        } else if (ex instanceof com.expenseflow.trip.exception.PermissionDeniedException) {
+            status = HttpStatus.FORBIDDEN;
+        } else if (ex instanceof com.expenseflow.trip.exception.ParticipantConflictException) {
+            status = HttpStatus.CONFLICT;
+        } else if (ex instanceof com.expenseflow.trip.exception.InvalidTripStateException) {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity
+                .status(status)
+                .body(ApiResponse.error(ex.getMessage(), ex.getCode()));
+    }
+
+    @ExceptionHandler(com.expenseflow.expense.exception.ExpenseException.class)
+    public ResponseEntity<ApiResponse<Void>> handleExpenseException(com.expenseflow.expense.exception.ExpenseException ex) {
+        log.warn("Expense domain exception triggered [{}]: {}", ex.getCode(), ex.getMessage());
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if (ex instanceof com.expenseflow.expense.exception.ExpenseNotFoundException) {
+            status = HttpStatus.NOT_FOUND;
+        } else if (ex instanceof com.expenseflow.expense.exception.ExpensePermissionDeniedException) {
+            status = HttpStatus.FORBIDDEN;
+        } else if (ex instanceof com.expenseflow.expense.exception.InvalidExpenseStateException) {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return ResponseEntity
+                .status(status)
+                .body(ApiResponse.error(ex.getMessage(), ex.getCode()));
+    }
+
     @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
         log.warn("Resource not found: {}", ex.getMessage());

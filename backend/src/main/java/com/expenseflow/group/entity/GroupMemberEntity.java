@@ -1,5 +1,6 @@
 package com.expenseflow.group.entity;
 
+import com.expenseflow.entity.BaseEntity;
 import com.expenseflow.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupMemberEntity {
+public class GroupMemberEntity extends BaseEntity {
 
     @Id
     @Column(name = "id", length = 36, nullable = false)

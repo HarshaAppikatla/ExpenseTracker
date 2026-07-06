@@ -23,6 +23,7 @@ import { NotificationsPage } from '../pages/NotificationsPage';
 import { InsightsPage } from '../pages/InsightsPage';
 import { GroupsPage } from '../pages/GroupsPage';
 import { GroupDetailPage } from '../pages/GroupDetailPage';
+import { TripDetailPage } from '../pages/TripDetailPage';
 
 // Auth Pages & Guards
 import { LoginPage } from '../pages/LoginPage';
@@ -82,6 +83,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/groups" element={<GroupsPage />} />
         <Route path="/groups/:id" element={<GroupDetailPage />} />
+        <Route path="/groups/:groupId/trips/:tripId" element={<TripDetailPage />} />
 
         {/* Settings nested under SettingsLayout */}
         <Route path="/settings" element={<SettingsLayout />}>

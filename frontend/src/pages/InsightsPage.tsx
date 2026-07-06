@@ -4,6 +4,7 @@ import { pageVariants } from '@/animations/variants';
 import { useInsights } from '@/features/insight/hooks/useInsight';
 import { useProfile } from '@/features/profile/hooks/useProfile';
 import { useExpenses } from '@/features/expense/hooks/useExpenses';
+import { matchCategory } from '@/features/expense/utils/categoryNormalizer';
 import {
   TrendingUp,
   TrendingDown,
@@ -231,7 +232,7 @@ export const InsightsPage: React.FC = () => {
               (() => {
                 const catInfo = insights.topSpendingCategories.find((c) => c.categoryId === selectedCategory);
                 const catExpenses = (expensesPage?.content || []).filter(
-                  (exp) => exp.category.id === selectedCategory
+                  (exp) => matchCategory(exp.category, catInfo?.categoryName || '')
                 );
                 return (
                   <div className="space-y-4">
@@ -257,21 +258,25 @@ export const InsightsPage: React.FC = () => {
                       {catExpenses.length === 0 ? (
                         <p className="text-center py-8 text-[11px] text-slate-400">No expenses logged for this category.</p>
                       ) : (
-                        catExpenses.map((exp) => (
-                          <div key={exp.id} className="flex justify-between items-center text-xs">
-                            <div>
-                              <p className="font-bold text-slate-850 dark:text-slate-100">
-                                {exp.merchant || 'Unspecified Merchant'}
-                              </p>
-                              <span className="text-[9px] text-slate-450">
-                                {new Date(exp.expenseDate).toLocaleDateString()}
+                        catExpenses.map((exp) => {
+                          const userSplit = exp.splits?.find(s => s.userId === profile?.id);
+                          const userOwed = userSplit ? userSplit.owedAmount : 0;
+                          return (
+                            <div key={exp.id} className="flex justify-between items-center text-xs">
+                              <div>
+                                <p className="font-bold text-slate-850 dark:text-slate-100">
+                                  {exp.description || 'Unspecified Expense'}
+                                </p>
+                                <span className="text-[9px] text-slate-450">
+                                  {new Date(exp.expenseDate).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <span className="font-bold text-slate-900 dark:text-white">
+                                -{currencySymbol}{userOwed.toFixed(2)}
                               </span>
                             </div>
-                            <span className="font-bold text-slate-900 dark:text-white">
-                              -{currencySymbol}{exp.amount.toFixed(2)}
-                            </span>
-                          </div>
-                        ))
+                          );
+                        })
                       )}
                     </div>
                   </div>

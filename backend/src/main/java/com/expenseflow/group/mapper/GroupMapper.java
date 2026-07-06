@@ -16,9 +16,10 @@ public interface GroupMapper {
 
     GroupSettingsDto toSettingsDto(GroupSettings settings);
 
+    @Mapping(target = "id", source = "entity.id")
     @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "name", source = "user.fullName")
-    @Mapping(target = "email", source = "user.email")
+    @Mapping(target = "userName", source = "user.fullName")
+    @Mapping(target = "userEmail", source = "user.email")
     @Mapping(target = "role", expression = "java(entity.getRole().name())")
     GroupMemberDto toMemberDto(GroupMemberEntity entity);
 

@@ -5,6 +5,7 @@ import { pageVariants } from '@/animations/variants';
 import { useBudgetProgress, useDeleteBudget } from '@/features/budget/hooks/useBudget';
 import { useExpenses } from '@/features/expense/hooks/useExpenses';
 import { useProfile } from '@/features/profile/hooks/useProfile';
+import { matchCategory } from '@/features/expense/utils/categoryNormalizer';
 import { WorkspaceLayout } from '@/layouts/WorkspaceLayout';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -58,7 +59,7 @@ export const BudgetDetailPage: React.FC = () => {
   const monthName = MONTHS[budget.month - 1];
 
   const budgetExpenses = (expensesPage?.content || []).filter((exp) => {
-    if (exp.category.id !== budget.categoryId) return false;
+    if (!matchCategory(exp.category, budget.categoryName)) return false;
     const expDate = new Date(exp.expenseDate);
     return expDate.getFullYear() === budget.year && (expDate.getMonth() + 1) === budget.month;
   });
@@ -71,11 +72,13 @@ export const BudgetDetailPage: React.FC = () => {
   ];
 
   budgetExpenses.forEach((exp) => {
+    const userSplit = exp.splits?.find(s => s.userId === profile?.id);
+    const userOwed = userSplit ? userSplit.owedAmount : 0;
     const day = new Date(exp.expenseDate).getDate();
-    if (day <= 7) weeklyData[0].value += exp.amount;
-    else if (day <= 14) weeklyData[1].value += exp.amount;
-    else if (day <= 21) weeklyData[2].value += exp.amount;
-    else weeklyData[3].value += exp.amount;
+    if (day <= 7) weeklyData[0].value += userOwed;
+    else if (day <= 14) weeklyData[1].value += userOwed;
+    else if (day <= 21) weeklyData[2].value += userOwed;
+    else weeklyData[3].value += userOwed;
   });
 
   const handleDelete = () => {
@@ -181,26 +184,30 @@ export const BudgetDetailPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="flex flex-col divide-y divide-slate-100 dark:divide-slate-800">
-                  {budgetExpenses.map((exp) => (
-                    <div key={exp.id} className="flex justify-between items-center py-4 first:pt-0 last:pb-0">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-rose-500 border border-rose-100 dark:border-rose-950/40 flex items-center justify-center font-bold text-xs">
-                          <TrendingDown size={16} />
+                  {budgetExpenses.map((exp) => {
+                    const userSplit = exp.splits?.find(s => s.userId === profile?.id);
+                    const userOwed = userSplit ? userSplit.owedAmount : 0;
+                    return (
+                      <div key={exp.id} className="flex justify-between items-center py-4 first:pt-0 last:pb-0">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-rose-500 border border-rose-100 dark:border-rose-950/40 flex items-center justify-center font-bold text-xs">
+                            <TrendingDown size={16} />
+                          </div>
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                              {exp.description}
+                            </h4>
+                            <p className="text-[10px] text-slate-400">
+                              {new Date(exp.expenseDate).toLocaleDateString()}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                            {exp.merchant || 'Unspecified Merchant'}
-                          </h4>
-                          <p className="text-[10px] text-slate-400">
-                            {new Date(exp.expenseDate).toLocaleDateString()}
-                          </p>
-                        </div>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">
+                          - {currencySymbol}{userOwed.toFixed(2)}
+                        </span>
                       </div>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white">
-                        - {currencySymbol}{exp.amount.toFixed(2)}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </Card>

@@ -12,4 +12,8 @@ public interface GroupQueryService {
     GroupDto getGroupDetails(String groupId, String currentUserId);
 
     GroupDashboardDto getGroupDashboard(String groupId, String currentUserId);
+
+    boolean isGroupActive(String groupId);
+
+    boolean isUserGroupMember(String groupId, String userId);
 }

@@ -1,85 +1,117 @@
 import React from 'react';
-import { Card } from '@/components/ui/Card';
-import { User, Mail, ShieldCheck, Calendar, Activity } from 'lucide-react';
-import { Avatar } from '@/components/ui/Avatar';
+import { motion } from 'framer-motion';
 import { useAuthContext } from '@/hooks/useAuthContext';
+import { useProfile } from '@/features/profile/hooks/useProfile';
+import { useFinancialDashboard } from '@/features/dashboard/hooks/useDashboard';
+import { useMyGroups } from '@/features/group/hooks/useGroups';
+import { pageVariants } from '@/animations/variants';
+import { Wallet, TrendingUp, PieChart, Users } from 'lucide-react';
+
+import { HeroProfileBanner } from '@/features/profile/components/HeroProfileBanner';
+import { ProfileStatsCard } from '@/features/profile/components/ProfileStatsCard';
+import { AccountDetailsCard } from '@/features/profile/components/AccountDetailsCard';
+import { ActivityTimeline } from '@/features/profile/components/ActivityTimeline';
+import { QuickActionsCard } from '@/features/profile/components/QuickActionsCard';
 
 export const ProfilePage: React.FC = () => {
   const { user } = useAuthContext();
+  
+  // Data queries
+  const { data: profile } = useProfile();
+  const { data: financial, isLoading: isFinancialLoading } = useFinancialDashboard();
+  const { data: groups, isLoading: isGroupsLoading } = useMyGroups(undefined, 0, 100);
 
-  const formattedDate = user?.createdAt 
-    ? new Date(user.createdAt).toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    : 'N/A';
+  const currencySymbol = profile?.preferredCurrency || '$';
+
+  // Determine top category details
+  const topCategoryName = financial?.topSpendingCategories?.[0]?.categoryName || 'N/A';
 
   return (
-    <div className="max-w-2xl mx-auto space-y-24">
-      <Card className="flex flex-col md:flex-row items-center gap-24 p-32">
-        <Avatar name={user?.fullName || 'User'} size="lg" className="border-4 border-primary/20" />
-        <div className="space-y-4 text-center md:text-left">
-          <h2 className="text-xl font-bold text-light-text dark:text-dark-text">
-            {user?.fullName}
-          </h2>
-          <p className="text-sm text-light-textSecondary dark:text-slate-400">
-            {user?.email}
-          </p>
-          <div className="flex flex-wrap gap-8 justify-center md:justify-start mt-2">
-            <span className="px-10 py-2 bg-slate-100 dark:bg-slate-800 text-light-textSecondary dark:text-slate-400 text-xs rounded-full border border-light-border dark:border-dark-border font-semibold">
-              Status: {user?.status}
-            </span>
-          </div>
-        </div>
-      </Card>
+    <motion.div
+      variants={pageVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="space-y-[24px]"
+    >
+      {/* Row 1 — Hero Profile Banner */}
+      <HeroProfileBanner
+        fullName={user?.fullName || 'User'}
+        email={user?.email || ''}
+        status={user?.status || 'ACTIVE'}
+        onEditClick={() => console.log('Edit Profile Clicked')}
+      />
 
-      <Card className="p-24 space-y-16">
-        <h3 className="font-bold text-sm text-light-text dark:text-dark-text border-b border-light-border dark:border-dark-border pb-12">
-          Account Details
-        </h3>
-        
-        <div className="space-y-12">
-          <div className="flex items-center gap-12 text-sm">
-            <Mail className="w-16 h-16 text-light-textSecondary dark:text-slate-400" />
-            <span className="text-light-textSecondary dark:text-slate-400 w-[90px]">Email:</span>
-            <span className="font-semibold text-light-text dark:text-dark-text">
-              {user?.email}
-            </span>
-          </div>
- 
-          <div className="flex items-center gap-12 text-sm">
-            <User className="w-16 h-16 text-light-textSecondary dark:text-slate-400" />
-            <span className="text-light-textSecondary dark:text-slate-400 w-[90px]">Roles:</span>
-            <span className="font-semibold text-light-text dark:text-dark-text capitalize">
-              {user?.roles?.map(r => r.replace('ROLE_', '').toLowerCase()).join(', ')}
-            </span>
-          </div>
- 
-          <div className="flex items-center gap-12 text-sm">
-            <Calendar className="w-16 h-16 text-light-textSecondary dark:text-slate-400" />
-            <span className="text-light-textSecondary dark:text-slate-400 w-[90px]">Created:</span>
-            <span className="font-semibold text-light-text dark:text-dark-text">
-              {formattedDate}
-            </span>
-          </div>
- 
-          <div className="flex items-center gap-12 text-sm">
-            <Activity className="w-16 h-16 text-light-textSecondary dark:text-slate-400" />
-            <span className="text-light-textSecondary dark:text-slate-400 w-[90px]">Provider:</span>
-            <span className="font-semibold text-light-text dark:text-dark-text uppercase">
-              {user?.loginProvider}
-            </span>
-          </div>
+      {/* Row 2 — Statistics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[24px]">
+        <ProfileStatsCard
+          title="Total Expenses"
+          value={
+            isFinancialLoading
+              ? '...'
+              : `${currencySymbol}${financial?.totalSpentCurrentMonth?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}`
+          }
+          subtext="This Month"
+          icon={Wallet}
+          iconBgClass="bg-purple-50/80 dark:bg-purple-950/20"
+          iconColorClass="text-purple-650 dark:text-purple-400"
+        />
+
+        <ProfileStatsCard
+          title="Total Income"
+          value={
+            isFinancialLoading
+              ? '...'
+              : `${currencySymbol}${financial?.totalIncomeCurrentMonth?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}`
+          }
+          subtext="This Month"
+          icon={TrendingUp}
+          iconBgClass="bg-emerald-50/80 dark:bg-emerald-950/20"
+          iconColorClass="text-emerald-600 dark:text-emerald-400"
+        />
+
+        <ProfileStatsCard
+          title="Top Category"
+          value={isFinancialLoading ? '...' : topCategoryName}
+          subtext="Highest Spending Category"
+          icon={PieChart}
+          iconBgClass="bg-amber-50/80 dark:bg-amber-950/20"
+          iconColorClass="text-amber-600 dark:text-amber-400"
+        />
+
+        <ProfileStatsCard
+          title="Active Groups"
+          value={isGroupsLoading ? '...' : groups?.totalElements || groups?.content?.length || 0}
+          subtext="Your Collaborative Groups"
+          icon={Users}
+          iconBgClass="bg-blue-50/80 dark:bg-blue-950/20"
+          iconColorClass="text-blue-600 dark:text-blue-400"
+        />
+      </div>
+
+      {/* Row 3 — Two-column details & activity layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-[24px]">
+        <div className="lg:col-span-2">
+          <AccountDetailsCard
+            email={user?.email}
+            roles={user?.roles}
+            createdAt={user?.createdAt}
+            loginProvider={user?.loginProvider}
+            status={user?.status}
+          />
         </div>
- 
-        <div className="flex items-start gap-8 bg-blue-50 dark:bg-slate-900 border border-blue-100 dark:border-slate-800 p-12 rounded-btn text-xs text-primary mt-16 leading-relaxed">
-          <ShieldCheck className="w-16 h-16 mt-2 flex-shrink-0" />
-          <span>
-            Your account is verified and secured using Spring Security and JWT token rotation. Settings management is disabled for this version.
-          </span>
+        <div className="lg:col-span-1">
+          <ActivityTimeline
+            createdAt={user?.createdAt}
+            emailVerified={true}
+          />
         </div>
-      </Card>
-    </div>
+      </div>
+
+      {/* Row 4 — Quick Actions */}
+      <QuickActionsCard />
+    </motion.div>
   );
 };
+
+export default ProfilePage;

@@ -1,7 +1,14 @@
 import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query';
-import { expenseService, Expense, ExpenseRequest, PaginatedResponse } from '../services/expenseService';
+import {
+  expenseService,
+  Expense,
+  ExpenseRequest,
+  GroupExpense,
+  PaginatedResponse,
+} from '../services/expenseService';
 
-export const useExpenses = (page = 0, size = 20, sort = 'expenseDate,desc'): UseQueryResult<PaginatedResponse<Expense>, Error> => {
+// Read-only User Expense Ledger Hook
+export const useExpenses = (page = 0, size = 20, sort = 'expenseDate,desc'): UseQueryResult<PaginatedResponse<GroupExpense>, Error> => {
   return useQuery({
     queryKey: ['expenses', page, size, sort],
     queryFn: () => expenseService.getExpenses(page, size, sort),
@@ -53,5 +60,29 @@ export const useMerchantSuggestions = (query: string, enabled = true): UseQueryR
     queryFn: () => expenseService.getMerchantSuggestions(query),
     enabled: !!query && enabled,
     staleTime: 60 * 1000,
+  });
+};
+
+// New Group / Shared Expense Hooks
+export const useGroupExpenses = (
+  groupId: string,
+  tripId?: string | null,
+  page = 0,
+  size = 20,
+  sort = 'expenseDate,desc',
+  enabled = true
+): UseQueryResult<PaginatedResponse<GroupExpense>, Error> => {
+  return useQuery({
+    queryKey: ['group-expenses', groupId, tripId, page, size, sort],
+    queryFn: () => expenseService.getGroupExpenses(groupId, tripId, page, size, sort),
+    enabled: !!groupId && enabled,
+  });
+};
+
+export const useGroupExpense = (id: string, enabled = true): UseQueryResult<GroupExpense, Error> => {
+  return useQuery({
+    queryKey: ['group-expense', id],
+    queryFn: () => expenseService.getGroupExpenseById(id),
+    enabled: !!id && enabled,
   });
 };

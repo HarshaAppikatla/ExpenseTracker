@@ -35,38 +35,38 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     <aside
       className={`fixed top-0 left-0 z-40 h-screen transition-transform duration-300 border-r ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
-      } lg:translate-x-0 w-[240px] bg-white dark:bg-dark-surface border-light-border dark:border-dark-border flex flex-col justify-between`}
+      } lg:translate-x-0 w-[240px] bg-slate-50 dark:bg-slate-900 border-[#EAECEF] dark:border-slate-800 flex flex-col justify-between`}
     >
-      <div>
+      <div className="flex flex-col h-full overflow-y-auto pb-[72px]">
         {/* Sidebar Header */}
-        <div className="h-[56px] border-b border-light-border dark:border-dark-border px-4 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-[30px] h-[30px] rounded-full bg-primary flex items-center justify-center text-white font-bold text-[11px] shrink-0">
+        <div className="h-[72px] border-b border-[#EAECEF] dark:border-slate-800 px-[24px] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-[12px] min-w-0">
+            <div className="w-[36px] h-[36px] rounded-[10px] bg-blue-600 flex items-center justify-center text-white font-extrabold text-[15px] shrink-0 shadow-sm">
               EF
             </div>
-            <span className="font-bold text-[15px] leading-none text-light-text dark:text-dark-text truncate">{APP_NAME}</span>
+            <span className="font-bold text-[16px] tracking-tight text-slate-900 dark:text-slate-100 truncate">{APP_NAME}</span>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="lg:hidden text-light-textSecondary dark:text-slate-400 p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-btn shrink-0"
+            className="lg:hidden text-slate-500 dark:text-slate-400 p-[6px] hover:bg-slate-100 dark:hover:bg-slate-800 rounded-[10px] shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Navigation Links */}
-        <nav className="p-16 space-y-4">
+        <nav className="px-[16px] py-[24px] space-y-[4px]">
           {links.map((link) => {
             const Icon = link.icon;
             if (link.disabled) {
               return (
                 <div
                   key={link.label}
-                  className="flex items-center gap-12 px-16 py-12 rounded-btn text-slate-400 dark:text-slate-600 cursor-not-allowed select-none opacity-60"
+                  className="flex items-center gap-[12px] px-[16px] py-[10px] rounded-[12px] text-slate-400 dark:text-slate-600 cursor-not-allowed select-none opacity-50 text-[14px] font-semibold"
                   title="Feature coming in a future sprint"
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium text-sm">{link.label}</span>
+                  <Icon className="w-[20px] h-[20px] shrink-0" />
+                  <span>{link.label}</span>
                 </div>
               );
             }
@@ -76,17 +76,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                 to={link.to}
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-12 px-16 py-12 rounded-btn transition-colors text-sm font-medium ${
+                  `flex items-center gap-[12px] px-[16px] py-[10px] rounded-[12px] transition-all duration-200 text-[14px] font-semibold ${
                     isActive
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-light-textSecondary dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-light-text dark:hover:text-dark-text'
+                      ? 'bg-blue-600/10 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-950 dark:hover:text-slate-100'
                   }`
                 }
               >
-                <Icon className="w-5 h-5" />
-                <span className="flex-1">{link.label}</span>
+                <Icon className="w-[20px] h-[20px] shrink-0" />
+                <span className="flex-1 truncate">{link.label}</span>
                 {(link as any).badge > 0 && (
-                  <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold px-1">
+                  <span className="ml-auto min-w-[20px] h-[20px] flex items-center justify-center rounded-full bg-blue-600 text-white text-[10px] font-bold px-[6px] shadow-sm">
                     {(link as any).badge > 99 ? '99+' : (link as any).badge}
                   </span>
                 )}
@@ -96,13 +96,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         </nav>
       </div>
 
-      {/* Sidebar Footer */}
-      <div className="p-16 border-t border-light-border dark:border-dark-border">
+      {/* Sidebar Footer - Logout fixed at bottom */}
+      <div className="absolute bottom-0 left-0 w-full p-[16px] border-t border-[#EAECEF] dark:border-slate-800 bg-slate-50 dark:bg-slate-900 z-10">
         <button
-          onClick={logout}
-          className="w-full flex items-center gap-12 px-16 py-12 rounded-btn text-light-textSecondary dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 transition-colors text-sm font-medium focus:outline-none"
+          onClick={() => logout()}
+          className="w-full flex items-center gap-[12px] px-[16px] py-[10px] rounded-[12px] text-slate-600 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 transition-colors text-[14px] font-semibold focus:outline-none"
         >
-          <LogOut className="w-5 h-5" />
+          <LogOut className="w-[20px] h-[20px] shrink-0" />
           <span>Logout</span>
         </button>
       </div>

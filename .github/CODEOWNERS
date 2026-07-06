@@ -1,0 +1,6 @@
+# Code owners file to assign reviewers to PRs automatically
+
+/backend/   @HarshaAppikatla
+/frontend/  @HarshaAppikatla
+/docs/      @HarshaAppikatla
+*           @HarshaAppikatla

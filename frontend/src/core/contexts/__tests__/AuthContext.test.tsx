@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { useContext } from 'react';
+import { render, screen, act } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { AuthProvider, AuthContext } from '../AuthContext';
 import { tokenService } from '@/features/auth/services/tokenService';
@@ -27,7 +27,7 @@ const TestConsumer = () => {
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
         expiresIn: 900000,
-        user: { email: 'user@example.com', fullName: 'User' },
+        user: { id: 'user-1', email: 'user@example.com', fullName: 'User', roles: ['ROLE_USER'], status: 'ACTIVE', loginProvider: 'LOCAL' } as any,
         roles: ['ROLE_USER'],
         permissions: []
       })}>Login</button>

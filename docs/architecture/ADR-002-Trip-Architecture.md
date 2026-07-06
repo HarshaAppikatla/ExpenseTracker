@@ -93,14 +93,26 @@ We do **not** embed `Group` or `User` JPA entities inside the Trip database sche
 
 ---
 
-## 7. Deletion Policy
+## 7. Transaction Boundary
+
+Each command operation executes within a single transactional boundary.
+
+All modifications to the Trip aggregate, including TripParticipant and
+TripActivity changes, are committed atomically.
+
+Cross-bounded-context operations are never part of the same database
+transaction.
+
+---
+
+## 8. Deletion Policy
 *   Trips are soft deleted (`is_deleted`, `deleted_at`, `deleted_by`).
-*   Historical activity logs remain preserved.
+*   TripActivity records are immutable historical records and remain preserved after Trip soft deletion.
 *   Physical deletion is not part of the application lifecycle.
 
 ---
 
-## 8. Cross-Context Interaction Rules
+## 9. Cross-Context Interaction Rules
 
 ### Communication Rule
 Bounded contexts must communicate through published service interfaces (queries, facade services, or events), never by directly accessing another context's JPA repositories or database tables.
@@ -116,7 +128,7 @@ Bounded contexts must communicate through published service interfaces (queries,
 
 ---
 
-## 9. Core Invariants
+## 10. Core Invariants
 
 *   **Single Organizer:** Every Trip has exactly one organizer.
 *   **Organizer Participation:** The organizer must always remain an active participant in the Trip.
@@ -128,7 +140,7 @@ Bounded contexts must communicate through published service interfaces (queries,
 
 ---
 
-## 10. Lifecycle Transitions & Behavioral Rules
+## 11. Lifecycle Transitions & Behavioral Rules
 
 ### Transitions Diagram
 The allowed status transitions are:
@@ -158,7 +170,7 @@ No other transitions are allowed.
 
 ---
 
-## 11. CQRS-lite & Read Models
+## 12. CQRS-lite & Read Models
 
 ### Command Operations
 *   `TripCommandService`
@@ -175,7 +187,7 @@ No other transitions are allowed.
 
 ---
 
-## 12. Domain Events & Timing
+## 13. Domain Events & Timing
 
 ### Events Suite
 *   `TripCreatedEvent`
@@ -194,7 +206,7 @@ No other transitions are allowed.
 
 ---
 
-## 13. Non-Goals
+## 14. Non-Goals
 *   Tracking expense ledger allocations (Trip does not own Expenses).
 *   Managing debt settlements.
 *   Providing travel analytics or dashboards.
@@ -202,9 +214,9 @@ No other transitions are allowed.
 
 ---
 
-## 14. Future Sprints Dependencies
+## 15. Future Sprints Dependencies
 
 *   **Sprint 06 (Shared Expenses):** Integrates by storing a foreign key relationship referencing `TripId`. Expenses will reference Trip, but Trip will never maintain financial totals.
 *   **Sprint 07 (Settlements):** Integrates by checking `TripId`.
 *   **Sprint 08 (Analytics):** Consumes `TripActivity` events.
-*   **Sprint 10 (Notifications):** Consumes domain events listed in Section 12.
+*   **Sprint 10 (Notifications):** Consumes domain events listed in Section 13.

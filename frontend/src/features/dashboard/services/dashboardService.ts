@@ -1,5 +1,4 @@
 import apiClient from '@/core/api/client';
-import { Category } from '@/features/category/services/categoryService';
 
 export interface CategoryBreakdown {
   name: string;

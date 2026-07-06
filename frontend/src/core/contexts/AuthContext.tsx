@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUserState] = useState<UserDto | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [sessionError, setSessionError] = useState<String | null>(null);
+  const [sessionError, setSessionError] = useState<string | null>(null);
 
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
   const absoluteTimerRef = useRef<NodeJS.Timeout | null>(null);

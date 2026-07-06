@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTransactions } from '@/features/transaction/hooks/useTransactions';
 import { useCategories } from '@/features/category/hooks/useCategories';
 import { useProfile } from '@/features/profile/hooks/useProfile';
-import { Search, Filter, Calendar, DollarSign, Tag, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Filter } from 'lucide-react';
 
 export const TransactionsPage: React.FC = () => {
   const { data: profile } = useProfile();

@@ -53,7 +53,7 @@ export const DashboardLayout: React.FC = () => {
   }, [navigate, toggleNotificationDrawer]);
 
   return (
-    <div className="min-h-screen bg-light-bg dark:bg-dark-bg transition-colors duration-300">
+    <div className="min-h-screen w-full bg-light-bg dark:bg-dark-bg transition-colors duration-300 flex">
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
@@ -61,10 +61,10 @@ export const DashboardLayout: React.FC = () => {
       <NotificationDrawer />
 
       {/* Main Content Area — offset matches sidebar width of 240px */}
-      <div className="lg:pl-[240px] flex flex-col min-h-screen">
+      <div className="lg:pl-[240px] flex flex-col flex-1 min-h-screen w-full">
         <Navbar onMenuClick={() => setSidebarOpen(true)} title={getPageTitle(location.pathname)} />
 
-        <main className="flex-1 p-24 md:p-32 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-[16px] md:p-[32px] w-full">
           {/* AnimatePresence enables exit animations when navigating between routes */}
           <AnimatePresence mode="wait" initial={false}>
             <Outlet key={location.pathname} />

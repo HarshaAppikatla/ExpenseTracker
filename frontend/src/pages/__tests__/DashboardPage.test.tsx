@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
@@ -13,6 +12,14 @@ vi.mock('@/features/dashboard/hooks/useDashboard', () => ({
 
 vi.mock('@/features/profile/hooks/useProfile', () => ({
   useProfile: vi.fn(),
+}));
+
+vi.mock('@/features/recurring/hooks/useRecurring', () => ({
+  useRecurringTransactions: vi.fn(() => ({
+    data: [],
+    isLoading: false,
+    isError: false,
+  })),
 }));
 
 vi.mock('@/hooks/useAuthContext', () => ({
@@ -80,9 +87,9 @@ describe('DashboardPage Component', () => {
     );
 
     expect(screen.getByText('Total Net Balance')).toBeInTheDocument();
-    expect(screen.getByText('$ 1300.00')).toBeInTheDocument();
-    expect(screen.getByText('+ $ 500.00')).toBeInTheDocument();
-    expect(screen.getByText('- $ 200.00')).toBeInTheDocument();
+    expect(screen.getByText('$1,300.00')).toBeInTheDocument();
+    expect(screen.getByText('+ $500.00')).toBeInTheDocument();
+    expect(screen.getByText('- $200.00')).toBeInTheDocument();
     expect(screen.getByText('Starbucks')).toBeInTheDocument();
   });
 });

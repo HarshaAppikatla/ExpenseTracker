@@ -118,4 +118,18 @@ public class GroupQueryServiceImpl implements GroupQueryService {
 
         return new GroupDashboardDto(groupDto, memberDtos, activityDtos, activeMemberCount);
     }
+
+    @Override
+    public boolean isGroupActive(String groupId) {
+        return groupRepository.findByIdAndIsDeletedFalse(groupId)
+                .map(group -> !group.getSettings().isArchived())
+                .orElse(false);
+    }
+
+    @Override
+    public boolean isUserGroupMember(String groupId, String userId) {
+        return groupMemberRepository
+                .findByGroupIdAndUserIdAndStatusAndIsDeletedFalse(groupId, userId, GroupMemberStatus.ACTIVE)
+                .isPresent();
+    }
 }
