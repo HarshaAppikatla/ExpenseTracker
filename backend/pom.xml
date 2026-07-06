@@ -21,7 +21,7 @@
         <springdoc-openapi.version>2.5.0</springdoc-openapi.version>
         <jjwt.version>0.12.6</jjwt.version>
         <bucket4j.version>8.10.1</bucket4j.version>
-        <shedlock.version>5.13.0</shedlock.version>
+        <shedlock.version>7.7.0</shedlock.version>
     </properties>
 
     <dependencies>
