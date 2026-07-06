@@ -1,4 +1,5 @@
 import React from 'react';
+import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { useAuthContext } from '@/hooks/useAuthContext';
 import { useProfile } from '@/features/profile/hooks/useProfile';
@@ -39,7 +40,7 @@ export const ProfilePage: React.FC = () => {
         fullName={user?.fullName || 'User'}
         email={user?.email || ''}
         status={user?.status || 'ACTIVE'}
-        onEditClick={() => console.log('Edit Profile Clicked')}
+        onEditClick={() => toast.error('Profile editing is disabled for this version.')}
       />
 
       {/* Row 2 — Statistics Cards */}

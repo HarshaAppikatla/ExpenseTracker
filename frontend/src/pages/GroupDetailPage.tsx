@@ -20,6 +20,7 @@ import { GroupDashboardSkeleton } from '../features/group/components/GroupSkelet
 import { TransferOwnershipDialog } from '../features/group/components/TransferOwnershipDialog';
 import { TripList } from '../features/trips/components/TripList';
 import { ExpenseList } from '../features/expense/components/ExpenseList';
+import { SettlementDashboard } from '../features/settlement/components/SettlementDashboard';
 
 export const GroupDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,7 +29,7 @@ export const GroupDetailPage: React.FC = () => {
   const currentUserId = user?.id;
 
   const [transferTargetId, setTransferTargetId] = React.useState<string | null>(null);
-  const [activeTab, setActiveTab] = React.useState<'members' | 'activity' | 'trips' | 'expenses'>('members');
+  const [activeTab, setActiveTab] = React.useState<'members' | 'activity' | 'trips' | 'expenses' | 'settlements'>('members');
 
   // Queries
   const { data, isLoading, isError, error } = useGroupDashboard(id || '', !!id);
@@ -184,6 +185,16 @@ export const GroupDetailPage: React.FC = () => {
             >
               Expenses
             </button>
+            <button
+              onClick={() => setActiveTab('settlements')}
+              className={`pb-3 text-sm font-bold border-b-2 transition-all ${
+                activeTab === 'settlements'
+                  ? 'border-slate-900 dark:border-white text-slate-900 dark:text-white'
+                  : 'border-transparent text-slate-400 hover:text-slate-650 dark:text-slate-500 dark:hover:text-slate-350'
+              }`}
+            >
+              Settlements
+            </button>
           </div>
 
           {activeTab === 'members' && (
@@ -213,6 +224,15 @@ export const GroupDetailPage: React.FC = () => {
 
           {activeTab === 'expenses' && (
             <ExpenseList groupId={group.id} members={members} />
+          )}
+
+          {activeTab === 'settlements' && (
+            <SettlementDashboard
+              groupId={group.id}
+              currentUserId={currentUserId || ''}
+              currentUserRole={currentUserRole}
+              isGroupArchived={isArchived}
+            />
           )}
         </div>
 

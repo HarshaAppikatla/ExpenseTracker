@@ -17,7 +17,7 @@ export const HeroProfileBanner: React.FC<HeroProfileBannerProps> = ({
   onEditClick,
 }) => {
   return (
-    <div className="h-[280px] w-full bg-gradient-to-r from-[#f8fbff] to-[#eef4ff] dark:from-slate-900/60 dark:to-slate-850/60 border border-[#EAECEF] dark:border-slate-800 rounded-[24px] p-[32px] shadow-sm relative overflow-hidden flex items-center justify-between">
+    <div className="antialiased h-[280px] w-full bg-gradient-to-r from-[#f8fbff] to-[#eef4ff] dark:from-slate-900/60 dark:to-slate-850/60 border border-[#EAECEF] dark:border-slate-800 rounded-[24px] p-[32px] shadow-sm relative overflow-hidden flex items-center justify-between">
       
       {/* Decorative Wave Overlay SVG Background */}
       <div className="absolute inset-0 pointer-events-none select-none opacity-40 dark:opacity-20 z-0">
@@ -56,7 +56,7 @@ export const HeroProfileBanner: React.FC<HeroProfileBannerProps> = ({
         {/* Floating Edit Button */}
         <button
           onClick={onEditClick}
-          className="flex items-center gap-[8px] px-[16px] py-[8px] bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 active:scale-95 transition-all text-white font-bold text-[13px] rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 shrink-0 self-end"
+          className="flex items-center gap-[8px] px-[16px] py-[8px] bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 active:scale-95 transition-all text-white font-semibold text-[13px] rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 shrink-0 self-end"
         >
           <Pencil className="w-[14px] h-[14px]" />
           <span>Edit Profile</span>

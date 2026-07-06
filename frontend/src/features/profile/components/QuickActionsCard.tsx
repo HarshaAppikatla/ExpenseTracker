@@ -1,6 +1,7 @@
 import React from 'react';
 import { Lock, Mail, Bell, CloudDownload } from 'lucide-react';
 import { ActionItem } from './ActionItem';
+import toast from 'react-hot-toast';
 
 export const QuickActionsCard: React.FC = () => {
   const actions = [
@@ -10,7 +11,7 @@ export const QuickActionsCard: React.FC = () => {
       icon: Lock,
       iconBgClass: 'bg-blue-50/80 dark:bg-blue-950/20',
       iconColorClass: 'text-blue-600 dark:text-blue-400',
-      onClick: () => console.log('Change Password Clicked'),
+      onClick: () => toast.error('Password change is disabled for this version.'),
     },
     {
       title: 'Update Email',
@@ -18,7 +19,7 @@ export const QuickActionsCard: React.FC = () => {
       icon: Mail,
       iconBgClass: 'bg-blue-50/80 dark:bg-blue-950/20',
       iconColorClass: 'text-blue-600 dark:text-blue-400',
-      onClick: () => console.log('Update Email Clicked'),
+      onClick: () => toast.error('Email updates are disabled for this version.'),
     },
     {
       title: 'Notification Settings',
@@ -26,7 +27,7 @@ export const QuickActionsCard: React.FC = () => {
       icon: Bell,
       iconBgClass: 'bg-blue-50/80 dark:bg-blue-950/20',
       iconColorClass: 'text-blue-600 dark:text-blue-400',
-      onClick: () => console.log('Notifications Clicked'),
+      onClick: () => toast.error('Notification configuration is disabled for this version.'),
     },
     {
       title: 'Download My Data',
@@ -34,7 +35,7 @@ export const QuickActionsCard: React.FC = () => {
       icon: CloudDownload,
       iconBgClass: 'bg-blue-50/80 dark:bg-blue-950/20',
       iconColorClass: 'text-blue-600 dark:text-blue-400',
-      onClick: () => console.log('Download Data Clicked'),
+      onClick: () => toast.error('Data exporting is disabled for this version.'),
     },
   ];
 
