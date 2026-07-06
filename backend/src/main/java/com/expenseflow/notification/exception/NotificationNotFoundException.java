@@ -1,0 +1,7 @@
+package com.expenseflow.notification.exception;
+
+public class NotificationNotFoundException extends NotificationException {
+    public NotificationNotFoundException(String message) {
+        super(message);
+    }
+}

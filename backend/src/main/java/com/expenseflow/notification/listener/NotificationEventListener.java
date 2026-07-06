@@ -1,7 +1,7 @@
 package com.expenseflow.notification.listener;
 
 import com.expenseflow.core.event.*;
-import com.expenseflow.notification.entity.NotificationPriority;
+import com.expenseflow.notification.domain.valueobject.NotificationPriority;
 import com.expenseflow.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

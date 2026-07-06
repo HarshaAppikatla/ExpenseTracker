@@ -1,7 +1,7 @@
 package com.expenseflow.notification.dto;
 
-import com.expenseflow.notification.entity.NotificationPriority;
-import com.expenseflow.notification.entity.NotificationStatus;
+import com.expenseflow.notification.domain.valueobject.NotificationPriority;
+import com.expenseflow.notification.domain.valueobject.NotificationStatus;
 
 import java.time.LocalDateTime;
 

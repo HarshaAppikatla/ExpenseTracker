@@ -102,6 +102,25 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage(), ex.getCode()));
     }
 
+    @ExceptionHandler(com.expenseflow.settlement.exception.SettlementException.class)
+    public ResponseEntity<ApiResponse<Void>> handleSettlementException(com.expenseflow.settlement.exception.SettlementException ex) {
+        log.warn("Settlement domain exception triggered [{}]: {}", ex.getCode(), ex.getMessage());
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if (ex instanceof com.expenseflow.settlement.exception.SettlementNotFoundException) {
+            status = HttpStatus.NOT_FOUND;
+        } else if (ex instanceof com.expenseflow.settlement.exception.SettlementPermissionDeniedException) {
+            status = HttpStatus.FORBIDDEN;
+        } else if (ex instanceof com.expenseflow.settlement.exception.InvalidSettlementStateException) {
+            status = HttpStatus.CONFLICT; // 409 Conflict
+        } else if (ex instanceof com.expenseflow.settlement.exception.NoPostedExpensesException) {
+            status = HttpStatus.UNPROCESSABLE_ENTITY; // 422
+        }
+        return ResponseEntity
+                .status(status)
+                .body(ApiResponse.error(ex.getMessage(), ex.getCode()));
+    }
+
+
     @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
         log.warn("Resource not found: {}", ex.getMessage());

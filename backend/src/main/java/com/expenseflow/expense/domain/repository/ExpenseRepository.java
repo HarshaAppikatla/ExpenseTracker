@@ -16,6 +16,11 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, String>,
 
     Page<ExpenseEntity> findByGroupIdAndTripIdAndIsDeletedFalse(String groupId, String tripId, Pageable pageable);
 
+    java.util.List<ExpenseEntity> findByGroupIdAndStatusAndIsDeletedFalse(String groupId, com.expenseflow.expense.domain.valueobject.ExpenseStatus status);
+
+    java.util.List<ExpenseEntity> findByGroupIdAndTripIdAndStatusAndIsDeletedFalse(String groupId, String tripId, com.expenseflow.expense.domain.valueobject.ExpenseStatus status);
+
+
     @org.springframework.data.jpa.repository.Query("SELECT COALESCE(SUM(s.owedAmount), 0) FROM ExpenseEntity e JOIN e.splits s WHERE s.userId = :userId AND e.isDeleted = false AND s.isDeleted = false")
     java.math.BigDecimal sumExpensesByUserId(@org.springframework.data.repository.query.Param("userId") String userId);
 
