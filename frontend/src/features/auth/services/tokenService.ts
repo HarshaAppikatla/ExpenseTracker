@@ -7,6 +7,11 @@ export const tokenService = {
 
   setAccessToken: (token: string | null): void => {
     memoryAccessToken = token;
+    if (token) {
+      document.cookie = `JWT=${token}; path=/; max-age=86400; SameSite=Lax`;
+    } else {
+      document.cookie = `JWT=; path=/; max-age=0; SameSite=Lax`;
+    }
   },
 
   getRefreshToken: (): string | null => {
@@ -24,6 +29,7 @@ export const tokenService = {
   removeTokens: (): void => {
     memoryAccessToken = null;
     localStorage.removeItem('refresh_token');
+    document.cookie = `JWT=; path=/; max-age=0; SameSite=Lax`;
   },
 
   hasSession: (): boolean => {

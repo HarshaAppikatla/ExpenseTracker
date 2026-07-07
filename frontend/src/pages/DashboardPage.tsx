@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useDashboardSummary, useFinancialDashboard } from '@/features/dashboard/hooks/useDashboard';
 import { useProfile } from '@/features/profile/hooks/useProfile';
 import { useAuthContext } from '@/hooks/useAuthContext';
+import { useBudgets } from '@/features/budget/hooks/useBudget';
 import { useRecurringTransactions } from '@/features/recurring/hooks/useRecurring';
 import { pageVariants } from '@/animations/variants';
 import {
@@ -14,7 +15,8 @@ import {
   Plus,
   Repeat2,
   Target,
-  X
+  X,
+  AlertTriangle
 } from 'lucide-react';
 
 import { HeroBanner } from '@/features/dashboard/components/HeroBanner';
@@ -29,6 +31,8 @@ import { UpcomingBillsCard } from '@/features/dashboard/components/UpcomingBills
 import { RecurringExpensesCard } from '@/features/dashboard/components/RecurringExpensesCard';
 import { HeatmapCard } from '@/features/dashboard/components/HeatmapCard';
 import { InsightsCard } from '@/features/dashboard/components/InsightsCard';
+import { RecentNotificationsCard } from '@/features/notification/components/RecentNotificationsCard';
+import { PendingSettlementsCard } from '@/features/settlement/components/PendingSettlementsCard';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -39,6 +43,16 @@ export const DashboardPage: React.FC = () => {
   const { data: financial, isLoading: isFinancialLoading, isError: isFinancialError } = useFinancialDashboard();
   const { data: profile } = useProfile();
   const { data: recurring = [] } = useRecurringTransactions();
+
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
+  const currentMonth = useMemo(() => new Date().getMonth() + 1, []);
+  const { data: budgetProgressList = [] } = useBudgets(currentYear, currentMonth);
+
+  const budgetWarnings = useMemo(() => {
+    return budgetProgressList.filter(
+      bp => bp.utilizationPercentage >= (bp.budget.alertPercentage || 80)
+    );
+  }, [budgetProgressList]);
 
   const [fabOpen, setFabOpen] = useState(false);
 
@@ -175,6 +189,52 @@ export const DashboardPage: React.FC = () => {
       exit="exit"
       className="space-y-[24px] relative"
     >
+      {/* Budget Warning Banner Alerts */}
+      {budgetWarnings.length > 0 && (
+        <div className="space-y-[12px]">
+          {budgetWarnings.map((warning) => {
+            const isExceeded = warning.utilizationPercentage >= 100;
+            return (
+              <div 
+                key={warning.budget.id} 
+                className={`p-4 rounded-[16px] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm border ${
+                  isExceeded 
+                    ? 'bg-rose-50/80 border-rose-100 dark:bg-rose-950/10 dark:border-rose-950/20 text-rose-800 dark:text-rose-450' 
+                    : 'bg-amber-50/80 border-amber-100 dark:bg-amber-950/10 dark:border-amber-950/20 text-amber-800 dark:text-amber-450'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg shrink-0 ${isExceeded ? 'bg-rose-100/80 text-rose-600 dark:bg-rose-900/30' : 'bg-amber-100/80 text-amber-600 dark:bg-amber-900/30'}`}>
+                    <AlertTriangle className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-extrabold tracking-tight">
+                      {isExceeded ? 'Budget Limit Exceeded' : 'Budget Limit Warning'}
+                    </p>
+                    <p className="text-[11px] opacity-90 mt-0.5">
+                      {isExceeded 
+                        ? `You have spent ${currencySymbol}${warning.currentSpent.toLocaleString()} of your ${currencySymbol}${warning.budget.monthlyLimit.toLocaleString()} monthly limit on ${warning.budget.categoryName}.`
+                        : `You have spent ${currencySymbol}${warning.currentSpent.toLocaleString()} (${Math.round(warning.utilizationPercentage)}%) of your ${currencySymbol}${warning.budget.monthlyLimit.toLocaleString()} monthly limit on ${warning.budget.categoryName}.`
+                      }
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => navigate('/budgets')}
+                  className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-all self-start sm:self-auto shrink-0 ${
+                    isExceeded 
+                      ? 'border-rose-200 hover:bg-rose-100 dark:border-rose-900/40 dark:hover:bg-rose-900/30 text-rose-700 dark:text-rose-400' 
+                      : 'border-amber-200 hover:bg-amber-100 dark:border-amber-900/40 dark:hover:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                  }`}
+                >
+                  Adjust Budget
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {/* Row 1: Hero Banner (2/3) and Financial Health (1/3) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[24px]">
         <div className="lg:col-span-2">
@@ -270,12 +330,12 @@ export const DashboardPage: React.FC = () => {
             transactions={summary.recentTransactions || []}
             currencySymbol={currencySymbol}
           />
-        </div>
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 flex flex-col gap-[24px]">
           <CategoryList
             categories={financial.topSpendingCategories || []}
             currencySymbol={currencySymbol}
           />
+          <RecentNotificationsCard />
         </div>
       </div>
 
@@ -285,8 +345,8 @@ export const DashboardPage: React.FC = () => {
           bills={recurring}
           currencySymbol={currencySymbol}
         />
-        <RecurringExpensesCard
-          recurringTransactions={recurring}
+        <PendingSettlementsCard
+          currencySymbol={currencySymbol}
         />
         <HeatmapCard
           transactions={summary.recentTransactions || []}

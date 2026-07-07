@@ -1,30 +1,33 @@
 import apiClient from '@/core/api/client';
-
-export interface Notification {
-  id: string;
-  userId: string;
-  notificationType: string;
-  title: string;
-  message: string;
-  status: 'UNREAD' | 'READ' | 'ARCHIVED';
-  priority: 'LOW' | 'NORMAL' | 'HIGH' | 'CRITICAL';
-  createdAt: string;
-}
+import { Notification, PageResponse } from '../types';
 
 export const notificationService = {
-  getAll: async (): Promise<Notification[]> => {
-    const res = await apiClient.get('/notifications');
+  getNotifications: async (page = 0, size = 20): Promise<PageResponse<Notification>> => {
+    const res = await apiClient.get('/notifications', {
+      params: { page, size }
+    });
+    return res.data.data;
+  },
+
+  getLatestNotifications: async (limit = 5): Promise<Notification[]> => {
+    const res = await apiClient.get('/notifications/latest', {
+      params: { limit }
+    });
     return res.data.data;
   },
 
   getUnreadCount: async (): Promise<number> => {
     const res = await apiClient.get('/notifications/unread-count');
-    return res.data.data;
+    return res.data.data.unreadCount;
   },
 
   markAsRead: async (id: string): Promise<Notification> => {
     const res = await apiClient.put(`/notifications/${id}/read`);
     return res.data.data;
+  },
+
+  markAllAsRead: async (): Promise<void> => {
+    await apiClient.put('/notifications/read-all');
   },
 
   archive: async (id: string): Promise<void> => {

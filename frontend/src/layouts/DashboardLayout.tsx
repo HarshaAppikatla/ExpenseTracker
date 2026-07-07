@@ -5,8 +5,10 @@ import { Sidebar } from '../components/layout/Sidebar';
 import { Navbar } from '../components/layout/Navbar';
 import { NotificationDrawer } from '../components/layout/NotificationDrawer';
 import { useUIStore } from '@/store/uiStore';
+import { useSseConnection } from '@/features/notification/hooks/useNotification';
 
 export const DashboardLayout: React.FC = () => {
+  useSseConnection(); // Activate SSE stream for live notifications
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
