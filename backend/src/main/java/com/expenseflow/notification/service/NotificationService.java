@@ -1,40 +1,22 @@
 package com.expenseflow.notification.service;
 
-import com.expenseflow.notification.dto.NotificationDto;
 import com.expenseflow.notification.domain.valueobject.NotificationPriority;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-
-@Slf4j
-@Service
-@RequiredArgsConstructor
-@Transactional
+/**
+ * @deprecated This monolithic service has been split into
+ * {@link NotificationCommandService} and {@link NotificationQueryService}
+ * per ADR-006 §3.3. This class will be removed in a future sprint.
+ *
+ * <p>All callers should migrate:
+ * <ul>
+ *   <li>Mutations → {@link NotificationCommandService}</li>
+ *   <li>Queries    → {@link NotificationQueryService}</li>
+ * </ul>
+ */
+@Deprecated(forRemoval = true)
 public class NotificationService {
 
-    @Transactional(readOnly = true)
-    public List<NotificationDto> getNotifications(String userId) {
-        return Collections.emptyList();
-    }
-
-    @Transactional(readOnly = true)
-    public long getUnreadCount(String userId) {
-        return 0;
-    }
-
-    public NotificationDto markAsRead(String userId, String notificationId) {
-        return null;
-    }
-
-    public void archiveNotification(String userId, String notificationId) {
-        log.info("Stub archive notification: {} by {}", notificationId, userId);
-    }
-
-    public void createNotification(String userId, String type, String title, String message, NotificationPriority priority) {
-        log.info("Stub create notification for user {}: {}", userId, title);
+    private NotificationService() {
+        // Non-instantiable — use NotificationCommandService or NotificationQueryService
     }
 }

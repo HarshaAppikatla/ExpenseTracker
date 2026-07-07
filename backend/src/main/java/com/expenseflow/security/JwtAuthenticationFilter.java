@@ -24,6 +24,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
 
+    @org.springframework.beans.factory.annotation.Value("${security.jwt.cookie-name:JWT}")
+    private String cookieName;
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -72,6 +75,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String headerAuth = request.getHeader("Authorization");
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
+        }
+
+        // Fallback to cookie extraction (useful for native SSE connections)
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+                if (cookieName.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
         }
         return null;
     }

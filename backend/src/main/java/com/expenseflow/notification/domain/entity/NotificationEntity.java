@@ -101,4 +101,13 @@ public class NotificationEntity extends BaseEntity {
             this.status = NotificationStatus.UNREAD;
         }
     }
+
+    /**
+     * Soft-deletes this notification. The record is retained in the database
+     * but excluded from all active queries via the {@code is_deleted} flag.
+     */
+    public void softDelete() {
+        this.setDeleted(true);
+        this.setDeletedAt(java.time.LocalDateTime.now());
+    }
 }

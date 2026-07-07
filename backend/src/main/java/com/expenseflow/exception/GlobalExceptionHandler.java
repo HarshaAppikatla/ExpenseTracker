@@ -120,6 +120,21 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage(), ex.getCode()));
     }
 
+    @ExceptionHandler(com.expenseflow.notification.exception.NotificationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNotificationException(com.expenseflow.notification.exception.NotificationException ex) {
+        log.warn("Notification domain exception triggered [{}]: {}", ex.getCode(), ex.getMessage());
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if (ex instanceof com.expenseflow.notification.exception.NotificationNotFoundException) {
+            status = HttpStatus.NOT_FOUND;
+        } else if (ex instanceof com.expenseflow.notification.exception.NotificationPermissionDeniedException) {
+            status = HttpStatus.FORBIDDEN;
+        } else if (ex instanceof com.expenseflow.notification.exception.InvalidNotificationStateException) {
+            status = HttpStatus.CONFLICT;
+        }
+        return ResponseEntity
+                .status(status)
+                .body(ApiResponse.error(ex.getMessage(), ex.getCode()));
+    }
 
     @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
